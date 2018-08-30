@@ -8,6 +8,8 @@
 <script>
   import FooterGuide from './components/FooterGuide/FooterGuide.vue'
   import {reqAddress} from './api'
+
+
   export default {
 //  async mounted(){
 //     const result = await reqAddress('41.20038,116.36867')

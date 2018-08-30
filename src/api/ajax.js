@@ -14,9 +14,9 @@ export default function ajax(url,data={}, type='GET') {
         paramStr = paramStr.substring(0,paramStr.length-1)
       }
       //使用axios发get请求
-      return axios.get(url +'?' + paramStr)
+     Promise= axios.get(url +'?' + paramStr)
     }else{//发送post请求
-      //使用axios发post请求
+      //
       promise = axios.post(url,data)
     }
 

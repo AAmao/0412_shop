@@ -8,8 +8,8 @@ const BASE = '/api'
 export const reqAddress =(geohash)=>ajax(`${BASE}/position/${geohash}`,)
 
 //获取食品分类的列表
-export const reqCategorys =()=>ajax('/index_category')
+export const reqCategorys =()=>ajax(BASE+'/index_category')
 
 //根据经纬度获取商铺列表
-export const reqShops =(longitude,latitude)=>ajax('/shops',{latitude,longitude})
+export const reqShops =(longitude,latitude)=>ajax(BASE+'/shops',{latitude,longitude})
 

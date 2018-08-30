@@ -4,13 +4,13 @@
       <div class="login_header">
         <h2 class="login_logo">硅谷外卖</h2>
         <div class="login_header_title">
-          <a href="javascript:;" class="on">短信登录</a>
-          <a href="javascript:;">密码登录</a>
+          <a href="javascript:; ":class="{on: !loginWay}" @click="loginWay = false">短信登录</a>
+          <a href="javascript:;":class="{on: loginWay}" @click="loginWay= true">密码登录</a>
         </div>
       </div>
       <div class="login_content">
         <form>
-          <div class="on">
+          <div :class="{on: !loginWay}">
             <section class="login_message">
               <input type="tel" maxlength="11" placeholder="手机号">
               <button disabled="disabled" class="get_verification">获取验证码</button>
@@ -23,21 +23,24 @@
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
-          <div>
+          <div :class="on: loginWay">
             <section>
               <section class="login_message">
                 <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="密码">
-                <div class="switch_button off">
-                  <div class="switch_circle"></div>
-                  <span class="switch_text">...</span>
+                <input :type="isShowPwd?'text':'password'" maxlength="8" placeholder="密码">
+                <div class="switch_button off" :class="isShowPwd?'on':'off'" @click="isShoePwd=!isShoePwd">
+                  <div class="switch_circle" :class="{right: isShowPwd}"></div>
+                  <span class="switch_text">
+                    {{isShowPwd ? 'abc' :''}}
+                  </span>
                 </div>
               </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <img class="get_verification" src="./images/captcha.svg" alt="captcha" alt ='captcha'
+                    @click="updateCaptcha">
               </section>
             </section>
           </div>
@@ -53,15 +56,51 @@
 </template>
 
 <script>
+  import {Toast, MessageBox} from 'mint-ui'
+  import {reqSendCode}from '../../api'
     export default {
         data() {
-            return {}
+            return {
+              loginWay, //false:短信  true:密码
+              phone:'',//手机号码
+              comuputeTime:0,// 倒计时剩余的时间
+              isSgowPwd:false// 是否显示密码
+            }
+        },
+      computed:{
+          isRightPhoto(){
+            return /^1\d{10}$/.test(this.phone)
+          }
+      },
+      methods:{
+          async sendCode() {
+            this.computeTime = 20
+            const interverId = setInterval(() => {
+              this.computeTime--
+              if (yhid.computeTime <= 0) {
+                this.computeTime = 0
+                clearInterval(interverId)
+              }
+            }, 1000)
+            const result = await reqSendCode(this.phone)
+            if (result.code === 0) {
+              Toast('验证码已发送')
+            } else {
+              this, computeTime = 0
+              MessageBox.alert('验证码发送失败', '提示')
+            }
+          },
+        updateCaptcha(event){
+            event.target.src = 'http://localhost:4000/captcha ? time =' +Date.now()
         }
+
+      }
     }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixins.styl"
+
   .loginContainer
     width 100%
     height 100%
@@ -79,7 +118,7 @@
         .login_header_title
           padding-top 40px
           text-align center
-          >a
+          > a
             color #333
             font-size 14px
             padding-bottom 4px
@@ -90,8 +129,8 @@
               font-weight 700
               border-bottom 2px solid #02a774
       .login_content
-        >form
-          >div
+        > form
+          > div
             display none
             &.on
               display block
@@ -121,6 +160,8 @@
                 color #ccc
                 font-size 14px
                 background transparent
+                &.right_phone_number
+                  color: black
             .login_verification
               position relative
               margin-top 16px
@@ -131,7 +172,7 @@
                 font-size 12px
                 border 1px solid #ddd
                 border-radius 8px
-                transition background-color .3s,border-color .3s
+                transition background-color .3s, border-color .3s
                 padding 0 6px
                 width 30px
                 height 16px
@@ -148,8 +189,7 @@
                     color #ddd
                 &.on
                   background #02a774
-                >.switch_circle
-                //transform translateX(27px)
+                > .switch_circle
                   position absolute
                   top -1px
                   left -1px
@@ -158,14 +198,16 @@
                   border 1px solid #ddd
                   border-radius 50%
                   background #fff
-                  box-shadow 0 2px 4px 0 rgba(0,0,0,.1)
+                  box-shadow 0 2px 4px 0 rgba(0, 0, 0, .1)
                   transition transform .3s
+                  &.right
+                    transform translateX(27px)
             .login_hint
               margin-top 12px
               color #999
               font-size 14px
               line-height 20px
-              >a
+              > a
                 color #02a774
           .login_submit
             display block
@@ -191,7 +233,7 @@
         left 5px
         width 30px
         height 30px
-        >.iconfont
+        > .iconfont
           font-size 20px
           color #999
 </style>

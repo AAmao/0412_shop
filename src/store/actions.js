@@ -20,6 +20,8 @@ async getAddress({commit,state}){
   const geohash = `${latitude},${longitude}`
   const result = await reqAddress(geohash)
   const address = result.data
+
+
   commit (RECEIVE_ADDRESS,{address})
 },
   // 异步获取食品分类列表
